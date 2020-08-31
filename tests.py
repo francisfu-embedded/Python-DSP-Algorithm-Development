@@ -23,11 +23,7 @@ windSinc1 = sp.getWindowedSinc('Hamming',0.2,len(sigs.InputSignal_1kHz_15kHz))
 windSinc2 = sp.getWindowedSinc('Blackman',0.2,len(sigs.InputSignal_1kHz_15kHz))
 windSinc3 = sp.getWindowedSinc('Rectangular',0.2,len(sigs.InputSignal_1kHz_15kHz))
 a=sp.signalHandle('sig1',sigs.InputSignal_1kHz_15kHz)
-b = sp.signalHandle('sig2',windSinc2)
-c = a.getConvolutionWith(b)
-
-print(len(sigs.InputSignal_1kHz_15kHz))
-plt.plot(c)
-plt.show()
+c = a.processWithWinSincFilter(13000, 48000)
+a.plotFilteredSig()
 
 

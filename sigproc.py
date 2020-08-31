@@ -152,6 +152,28 @@ class signalHandle:
                                      - self.__signalArray[j-N0]
                                      + (a**N0) * self.__filteredSig[j - N0])
         return self.__filteredSig
+
+    #this is a FIR filter implementation using a windowed sinc function 
+    def processWithWinSincFilter(self, freq, sampRate):
+        sigLen = len(self.__signalArray)
+        
+        #discrete angular frequency
+        disFreq = freq / sampRate 
+
+        #get windowed sinc and its signal object
+        windSinc1 = getWindowedSinc('Blackman',disFreq,sigLen)
+        winSigObj = signalHandle('dummy',windSinc1)
+
+        self.__filteredSig = self.getConvolutionWith(winSigObj)
+
+        #shift the filtered output back by sigLen/2
+        for i in range(0, int(sigLen/2)):
+            self.__filteredSig.pop(0)
+            self.__filteredSig.pop()
+
+        return self.__filteredSig
+        
+        
                  
     #plotting methods
     def plotConvolution(self):
@@ -257,7 +279,7 @@ def getWindowedSinc (windowType, disFreq, length):
     
     if(windowType == 'Hamming'):
         for j in range(length):
-            window[j] = 0.54 - 0.46*np.cos(2*math.pi*(j-shift)/length)
+            window[j] = 0.54 - 0.46*np.cos(2*math.pi*(j)/length)
             
     elif(windowType == 'Blackman'):
         for j in range(length):
