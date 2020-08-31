@@ -225,7 +225,54 @@ def getIDFT (realSig, imgSig):
                           realSig[k] * math.cos(2 * math.pi * k * j / nLength)+
                           imgSig[k] * math.sin(2 * math.pi * k * j / nLength))
     return reconSig
+
+#gets a sinc function with user-specified length and shift (right) value
+def getSinc (disFreq, length, shift):
+    sinc = []
+    for n in range (0,length):
+        sinc.append(0)
+
+    #at n = shift, the sinc function value should be disFreq as can be proved
+    #by taking the limit of sin(2*pi*f*n)/(pi*n)
+    for n in range (0,length):
+        if (n != shift):
+            sin = np.sin((n-shift)*math.pi*disFreq)
+            x = (math.pi*(n-shift))
+            sinc[n] = sin/x
+
+    sinc[shift] = disFreq
+    return sinc
+
+#gets a windowed Sinc with user-specified window type, length of window/sinc
+#function, and more importantly, the discrete frequency disFreq = f0/fs
+def getWindowedSinc (windowType, disFreq, length):
+    shift = int(length/2)
+    sinc = getSinc (disFreq, length, shift)
+
+    window = []
+    windowedSinc = []
+    for i in range(length):
+        window.append(0)
+        windowedSinc.append(0)
+    
+    if(windowType == 'Hamming'):
+        for j in range(length):
+            window[j] = 0.54 - 0.46*np.cos(2*math.pi*(j-shift)/length)
             
+    elif(windowType == 'Blackman'):
+        for j in range(length):
+            window[j] = (0.42 - 0.50*np.cos(2*math.pi*(j)/length)+
+                        0.08*np.cos(4*math.pi*(j)/length))
+    elif(windowType == 'Rectangular'):
+        for j in range(length):
+            window[j] = 1
+            
+    for k in range(length):
+        windowedSinc[k] = abs(window[k]*sinc[k])
+
+    return windowedSinc
+        
+    
 
 
     
