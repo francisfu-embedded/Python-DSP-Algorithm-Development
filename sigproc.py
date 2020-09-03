@@ -114,7 +114,7 @@ class signalHandle:
 
     #freq is the frequency to be rejected in the frequency spectrum,
     #a is the constant to time with for the poles at frequency freq
-    def processWithNotchFilter(self, freq, a, sampRate):
+    def processWithIIRNotchFilter(self, freq, a, sampRate):
         
         sigLen = len(self.__signalArray)
         
@@ -139,7 +139,7 @@ class signalHandle:
     #freq is the fundamental frequency of frequencies to be rejected 
     #a is the constant to time with for the poles at frequency freq
     #which has a range between 0 and 1
-    def processWithCombFilter(self, freq, a, sampRate):
+    def processWithIIRCombFilter(self, freq, a, sampRate):
         sigLen = len(self.__signalArray)
 
         N0 = int(sampRate/freq)
@@ -154,7 +154,7 @@ class signalHandle:
         return self.__filteredSig
 
     #this is a FIR filter implementation using a windowed sinc function 
-    def processWithWinSincFilter(self, freq, sampRate):
+    def processWithFIRSincLpFilter(self, freq, sampRate):
         sigLen = len(self.__signalArray)
         
         #discrete angular frequency
